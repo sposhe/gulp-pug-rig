@@ -7,17 +7,18 @@ const webpack = require('webpack-stream')
 const { src, dest, series, parallel, watch } = require('gulp')
 
 // gulp plugins
-const pug          = require('gulp-pug')
-const sass         = require('gulp-sass')
-const data         = require('gulp-data')
-const concat       = require('gulp-concat')
-const rename       = require('gulp-rename')
-const replace      = require('gulp-replace')
-const cleanCSS     = require('gulp-clean-css')
-const sourcemaps   = require('gulp-sourcemaps')
-const urlBuilder   = require('gulp-url-builder')
-const autoprefixer = require('gulp-autoprefixer')
-const htmlbeautify = require('gulp-html-beautify')
+const pug                 = require('gulp-pug')
+const sass                = require('gulp-sass')
+const data                = require('gulp-data')
+const concat              = require('gulp-concat')
+const rename              = require('gulp-rename')
+const replace             = require('gulp-replace')
+const cleanCSS            = require('gulp-clean-css')
+const sourcemaps          = require('gulp-sourcemaps')
+const urlBuilder          = require('gulp-url-builder')
+const autoprefixer        = require('gulp-autoprefixer')
+const htmlbeautify        = require('gulp-html-beautify')
+const sassExtendShorthand = require('gulp-sass-extend-shorthand')
 
 
 
@@ -49,7 +50,8 @@ function sassCompile() {
     'src/scss/**/*.+(sass|scss|css)',
     '!**/_*.*'
   ]).pipe( sourcemaps.init() )
-    .pipe( sass() )
+    .pipe( sassExtendShorthand() )
+    .pipe( sass({includePaths: ['node_modules']}) )
     .pipe( autoprefixer() )
     .pipe( cleanCSS() )
     .pipe( sourcemaps.write('./') )

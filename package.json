@@ -29,8 +29,10 @@
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.1.0",
+    "gulp-sass-extend-shorthand": "^1.0.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-url-builder": "^1.0.1",
+    "tachyons-sass-placeholders": "^1.0.0",
     "webpack-stream": "^5.2.1"
   }
 }
