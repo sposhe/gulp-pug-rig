@@ -2,6 +2,7 @@
 const fs      = require('fs')
 const bsync   = require('browser-sync').create()
 const webpack = require('webpack-stream')
+const indexer = require('component-indexer')
 
 // gulp
 const { src, dest, series, parallel, watch } = require('gulp')
@@ -28,6 +29,11 @@ const destination = 'docs'
 
 
 // pug
+function pugIndexer(cb) {
+  indexer('/src/pug/includes', 'pug')
+  indexer('/src/pug/mixins',   'pug')
+  cb()
+}
 function pugCompile() {
   return src([
     'src/pug/views/**/*.pug'
@@ -38,13 +44,17 @@ function pugCompile() {
     .pipe( bsync.reload({ stream: true }) )
 }
 function pugWatch(cb) {
-  watch('src/pug/**/*.pug', pugCompile)
+  watch(['src/pug/**/*.pug', '!**/_index.*'], series(pugIndexer, pugCompile))
   cb()
 }
 
 
 
 // sass
+function sassIndexer(cb) {
+  indexer('/src/scss/partials', 'scss')
+  cb()
+}
 function sassCompile() {
   return src([
     'src/scss/**/*.+(sass|scss|css)',
@@ -59,7 +69,7 @@ function sassCompile() {
     .pipe( bsync.reload({ stream: true }) )
 }
 function sassWatch(cb) {
-  watch('src/scss/*.+(sass|scss)', sassCompile)
+  watch(['src/scss/**/*.+(sass|scss)', '!**/_index.*'], series(sassIndexer, sassCompile))
   cb()
 }
 
@@ -68,7 +78,7 @@ function sassWatch(cb) {
 // javascript
 function jsBundle() {
   return src('src/js/app.js')
-    .pipe( webpack() )
+    .pipe( webpack({ mode: 'development' }) )
     .pipe( rename({ basename: 'app' }) )
     .pipe( dest(`${destination}/js`) )
     .pipe( bsync.reload({ stream: true }) )
@@ -91,9 +101,9 @@ function sync() {
 
 
 // exports
-exports.pug     = pugCompile
-exports.sass    = sassCompile
+exports.pug     = series(pugIndexer, pugCompile)
+exports.sass    = series(sassIndexer, sassCompile)
 exports.js      = jsBundle
-exports.build   = parallel(pugCompile, sassCompile, jsBundle)
+exports.build   = parallel(exports.pug, exports.sass, jsBundle)
 exports.watch   = series(pugWatch, sassWatch, jsWatch)
 exports.default = series(exports.build, exports.watch, sync)

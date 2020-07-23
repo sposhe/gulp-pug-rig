@@ -18,6 +18,7 @@
   "homepage": "https://github.com/sposhe/gulp-pug-rig#readme",
   "devDependencies": {
     "browser-sync": "^2.26.3",
+    "component-indexer": "^1.0.0",
     "fs": "0.0.1-security",
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^6.0.0",
