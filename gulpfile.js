@@ -21,23 +21,24 @@ const autoprefixer        = require('gulp-autoprefixer')
 const htmlbeautify        = require('gulp-html-beautify')
 const sassExtendShorthand = require('gulp-sass-extend-shorthand')
 
-
+// helpers
+const paths = (base, folders) => folders.map(folder => base + '/' + folder)
 
 // variables
 const destination = 'docs'
-
-
+const pugIndex = paths('src/pug', ['mixins'])
+const sassIndex = paths('src/scss', ['partials', 'vendor', 'mixins'])
+const locals = {}
 
 // pug
 function pugIndexer(cb) {
-  indexer('/src/pug/includes', 'pug')
-  indexer('/src/pug/mixins',   'pug')
+  pugIndex.forEach(path => indexer(path, 'pug'))
   cb()
 }
 function pugCompile() {
   return src([
     'src/pug/views/**/*.pug'
-  ]).pipe( pug() )
+  ]).pipe( pug({ locals }) )
     .pipe( htmlbeautify({ indent_size: 2 }) )
     .pipe( urlBuilder() )
     .pipe( dest(destination) )
@@ -48,11 +49,9 @@ function pugWatch(cb) {
   cb()
 }
 
-
-
 // sass
 function sassIndexer(cb) {
-  indexer('/src/scss/partials', 'scss')
+  sassIndex.forEach((dir) =>  indexer(dir, 'scss'))
   cb()
 }
 function sassCompile() {
@@ -73,8 +72,6 @@ function sassWatch(cb) {
   cb()
 }
 
-
-
 // javascript
 function jsBundle() {
   return src('src/js/app.js')
@@ -88,8 +85,6 @@ function jsWatch(cb) {
   cb()
 }
 
-
-
 // browsersync
 function sync() {
   bsync.init({
@@ -99,11 +94,10 @@ function sync() {
   })
 }
 
-
 // exports
 exports.pug     = series(pugIndexer, pugCompile)
 exports.sass    = series(sassIndexer, sassCompile)
 exports.js      = jsBundle
-exports.build   = parallel(exports.pug, exports.sass, jsBundle)
+exports.build   = parallel(exports.pug, exports.sass, exports.js)
 exports.watch   = series(pugWatch, sassWatch, jsWatch)
 exports.default = series(exports.build, exports.watch, sync)
