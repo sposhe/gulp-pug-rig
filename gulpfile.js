@@ -54,21 +54,35 @@ function sassIndexer(cb) {
   sassIndex.forEach((dir) =>  indexer(dir, 'scss'))
   cb()
 }
+function sassShorthand() {
+  return src([
+    'src/scss/**/%*.+(sass|scss|css)'
+  ]).pipe( sassExtendShorthand() )
+    .pipe( rename(function(path) {
+      path.basename = path.basename.replace('%','_')
+    }) )
+    .pipe( dest(file => file.base) )
+}
 function sassCompile() {
   return src([
     'src/scss/**/*.+(sass|scss|css)',
-    '!**/_*.*'
-  ]).pipe( sourcemaps.init() )
-    .pipe( sassExtendShorthand() )
-    .pipe( sass({includePaths: ['node_modules']}) )
+    '!src/scss/**/_*.*',
+    '!src/scss/**/%*.*'
+  ]).pipe( sass({ includePaths: ['node_modules'] }) )
     .pipe( autoprefixer() )
     .pipe( cleanCSS() )
-    .pipe( sourcemaps.write('./') )
     .pipe( dest(`${destination}/css`) )
     .pipe( bsync.reload({ stream: true }) )
 }
 function sassWatch(cb) {
-  watch(['src/scss/**/*.+(sass|scss)', '!**/_index.*'], series(sassIndexer, sassCompile))
+  watch([
+    'src/scss/**/%*.*'
+  ], series(sassShorthand))
+  watch([
+    'src/scss/**/*.+(sass|scss)',
+    '!src/scss/**/%*.*',
+    '!src/scss/**/_index.*'
+  ], series(sassIndexer, sassCompile))
   cb()
 }
 
@@ -96,7 +110,7 @@ function sync() {
 
 // exports
 exports.pug     = series(pugIndexer, pugCompile)
-exports.sass    = series(sassIndexer, sassCompile)
+exports.sass    = series(sassShorthand, sassIndexer, sassCompile)
 exports.js      = jsBundle
 exports.build   = parallel(exports.pug, exports.sass, exports.js)
 exports.watch   = series(pugWatch, sassWatch, jsWatch)
