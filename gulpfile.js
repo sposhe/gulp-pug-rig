@@ -9,7 +9,7 @@ const { src, dest, series, parallel, watch } = require('gulp')
 
 // gulp plugins
 const pug                 = require('gulp-pug')
-const sass                = require('gulp-sass')
+const sass                = require('gulp-sass')(require('sass'))
 const data                = require('gulp-data')
 const concat              = require('gulp-concat')
 const rename              = require('gulp-rename')
