@@ -1,4 +1,17 @@
 extends ../templates/_root
 
+prepend head
+  - const path = '/'
+  - const type = 'website'
+  - const title = 'Hello World'
+  - const description = 'A template for Pug and more.'
+  - const image = '/og.png'
+  - const alt = 'My OpenGraph image'
+  - const card = 'summary_large_image'
+  
+append head
+  script(type='application/ld+json')
+    include ../../json/index.min.json
+
 append body
   p test
