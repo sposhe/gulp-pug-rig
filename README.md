@@ -18,9 +18,8 @@ There's a number of quality-of-life customizations built into the Gulp processes
     1. [`@extend` at-rule shorthand syntax](#extend-at-rule-shorthand-syntax)
         1. [sass shorthand examples](#sass-shorthand-examples)
 1. [json-ld](#json-ld)
-    1. [pug to json](#pug-to-json)
-        1. [file-setup](#file-setup)
-        1. [syntax examples](#syntax-examples)
+    1. [file-setup](#file-setup)
+    1. [syntax examples](#syntax-examples)
 
 
 ## getting started
@@ -161,18 +160,16 @@ Additionally see [`/src/scss/partials/%hello-world.scss`](https://github.com/spo
 [JSON-LD](https://json-ld.org/) is a format for providing linked data in JSON format—commonly used to add [Schema.org](https://schema.org/) structured data to webpages via inclusion within a `<script>` element in the document `<head>`.
 
 JSON-LD can take awhile to write, so this template provides a way to author JSON-LD using Pug syntax.
-
-### pug to json
 Files with the `.json.pug` compound extension within the `/src/json/` directory are processed by Gulp and then output as two true JSON files within the same directory—one minified, one formatted. This Gulp task is run before the Pug tasks, so Pug files can `include` the minified JSON within `script` elements to add the structured data to each page.
 
-#### file setup
+### file setup
 XML is used as an intermediary between Pug and JSON, and as such, each `.json.pug` must explicitly provide an XML doctype.
 
 The JSON-LD markup must be wrapped in `root` and `entity` elements because of how the intermediary process works. See [`/src/json/index.json.pug`](https://github.com/sposhe/gulp-pug-rig/blob/master/src/json/index.json.pug) for an example.
 
-#### syntax examples
+### syntax examples
 
-##### properties and values
+#### properties and values
 Pug elements become JSON property names, and the text content of those elements become the values of those properties.
 ```pug
 foo bar
@@ -184,7 +181,7 @@ becomes
 }
 ```
 
-##### nested objects
+#### nested objects
 Nested Pug elements become nested objects.
 ```pug
 lorem
@@ -204,7 +201,7 @@ becomes
 }
 ```
 
-##### arrays
+#### arrays
 Duplicate pug elements are combined into arrays.
 ```pug
 palette
@@ -227,7 +224,7 @@ becomes
 }
 ```
 
-##### syntax for syntax tokens
+#### syntax for syntax tokens
 JSON-LD [syntax tokens](https://www.w3.org/TR/json-ld/#syntax-tokens-and-keywords)—property names that start with `@`, such as `@context`—must be written in a special format because XML is used as an intermediary and `@` is invalid in XML element names. Instead, syntax tokens need to be prefixed with `at-`. So instead of writing `@context`, write `at-context`.
 ```pug
 at-context http://www.schema.org
