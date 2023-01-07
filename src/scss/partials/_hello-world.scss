@@ -1,0 +1,14 @@
+:root {
+  @extend %sans-serif;
+}
+code {
+  @extend %code;
+}
+main {
+  @extend %mv5;
+  @extend %mw7;
+  @extend %center;
+}
+header {
+  @extend %bb;
+}
